@@ -159,27 +159,6 @@ function shuffleDeck() {
     }
 }
 
-function startingHands() {
-    drawCards(7, player);
-    drawCards(7, !player);
-}
-
-function drawCards(cardsNum, player) {
-
-    for (i = 0; i < cardsNum; i++) {
-        if (player) {
-            playerHand.push(unoDeck[i])
-        }
-        else {
-            opponentHand.push(unoDeck[i])
-        }
-        unoDeck.shift();
-    }
-}
-
-function switchTurn() {
-    turn = !turn
-}
 
 function cardsHandler(e) {
 
