@@ -172,7 +172,10 @@ function drawCards(cardsNum, player) {
     }
 }
 
-
+function startingHands() {
+    drawCards(7, player);
+    drawCards(7, !player);
+}
 
 
 
