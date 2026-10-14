@@ -177,7 +177,9 @@ function startingHands() {
     drawCards(7, !player);
 }
 
-
+function switchTurn() {
+    turn = !turn
+}
 
 function cardsHandler(e) {
 
