@@ -25,8 +25,8 @@ const UnoCardCatalogue = [
     { id: 21, name: 'Skip', color: 'blue' },
     { id: 22, name: 'Reverse', color: 'blue' },
     { id: 23, name: 'Reverse', color: 'blue' },
-    { id: 24, name: 'Draw Two', color: 'blue' },
-    { id: 25, name: 'Draw Two', color: 'blue' },
+    { id: 24, name: 'Draw_Two', color: 'blue' },
+    { id: 25, name: 'Draw_Two', color: 'blue' },
 
     // Red
     { id: 26, name: 0, color: 'red' },
@@ -52,8 +52,8 @@ const UnoCardCatalogue = [
     { id: 46, name: 'Skip', color: 'red' },
     { id: 47, name: 'Reverse', color: 'red' },
     { id: 48, name: 'Reverse', color: 'red' },
-    { id: 49, name: 'Draw Two', color: 'red' },
-    { id: 50, name: 'Draw Two', color: 'red' },
+    { id: 49, name: 'Draw_Two', color: 'red' },
+    { id: 50, name: 'Draw_Two', color: 'red' },
 
     // Green
     { id: 51, name: 0, color: 'green' },
@@ -79,8 +79,8 @@ const UnoCardCatalogue = [
     { id: 71, name: 'Skip', color: 'green' },
     { id: 72, name: 'Reverse', color: 'green' },
     { id: 73, name: 'Reverse', color: 'green' },
-    { id: 74, name: 'Draw Two', color: 'green' },
-    { id: 75, name: 'Draw Two', color: 'green' },
+    { id: 74, name: 'Draw_Two', color: 'green' },
+    { id: 75, name: 'Draw_Two', color: 'green' },
 
     // Yellow
     { id: 76, name: 0, color: 'yellow' },
@@ -106,23 +106,25 @@ const UnoCardCatalogue = [
     { id: 96, name: 'Skip', color: 'yellow' },
     { id: 97, name: 'Reverse', color: 'yellow' },
     { id: 98, name: 'Reverse', color: 'yellow' },
-    { id: 99, name: 'Draw Two', color: 'yellow' },
-    { id: 100, name: 'Draw Two', color: 'yellow' },
+    { id: 99, name: 'Draw_Two', color: 'yellow' },
+    { id: 100, name: 'Draw_Two', color: 'yellow' },
 
     // Wild cards
     { id: 101, name: 'Wild', color: 'black' },
     { id: 102, name: 'Wild', color: 'black' },
     { id: 103, name: 'Wild', color: 'black' },
     { id: 104, name: 'Wild', color: 'black' },
-    { id: 105, name: 'Wild Draw Four', color: 'black' },
-    { id: 106, name: 'Wild Draw Four', color: 'black' },
-    { id: 107, name: 'Wild Draw Four', color: 'black' },
-    { id: 108, name: 'Wild Draw Four', color: 'black' }
+    { id: 105, name: 'Wild_Draw_Four', color: 'black' },
+    { id: 106, name: 'Wild_Draw_Four', color: 'black' },
+    { id: 107, name: 'Wild_Draw_Four', color: 'black' },
+    { id: 108, name: 'Wild_Draw_Four', color: 'black' }
 ];
 
 const cardPoolElement = document.querySelector('#card-pool');
 const opponentHandElement = document.querySelector('#opponent-hand');
 const playerHandElement = document.querySelector('#player-hand');
+const deckElement = document.querySelector('#deck');
+
 
 //cached values
 
@@ -150,10 +152,40 @@ function init() {
     player = turn
     shuffleDeck()
     startingHands()
+
+    initUI()
+    render()
 }
 
-function updateUI() {
+function render() {
+    playerHand.forEach((card) => {
+        let newCard = document.createElement("div")
+        newCard.textContent = card.name
+        newCard.classList.add('card')
+        playerHandElement.appendChild(newCard)
+    })
 
+    opponentHand.forEach((card) => {
+        let newCard = document.createElement("div")
+        newCard.textContent = card.name
+        newCard.classList.add('card')
+        opponentHandElement.appendChild(newCard)
+    })
+
+    // show the last card in the pool
+    let cardForPool = document.createElement("div")
+    cardForPool.textContent = cardPool[cardPool.length - 1].name + " : " + cardPool[cardPool.length - 1].color
+    cardForPool.classList.add('card')
+    cardPoolElement.appendChild(cardForPool);
+
+    deckElement.textContent = "TOTAL CARDS IN DECK : " + unoDeck.length;
+
+}
+
+function initUI() {
+    playerHandElement.replaceChildren();
+    opponentHandElement.replaceChildren();
+    cardPoolElement.replaceChildren();
 }
 
 function shuffleDeck() {
@@ -207,8 +239,14 @@ function activateCardEffect(card) {
 
 function cardsHandler(e) {
 
+
+    render();
+
 }
+
+
 // Event Listeners
+
 
 
 
@@ -248,6 +286,7 @@ selectTheFirstCardForPool()
 console.log('THE FIRST CARD IN THE POOL : ', cardPool[0])
 console.log("-----------------------------------------")
 
+render()
 
 
 
