@@ -303,7 +303,7 @@ function isTheCardCounterable() {
 function cardsHandler(e) {
 
 
-    render();
+    //render();
 
 }
 
