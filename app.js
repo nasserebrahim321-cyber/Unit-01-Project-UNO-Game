@@ -124,13 +124,18 @@ const cardPoolElement = document.querySelector('#card-pool');
 const opponentHandElement = document.querySelector('#opponent-hand');
 const playerHandElement = document.querySelector('#player-hand');
 const deckElement = document.querySelector('#deck');
-
+const opponentCardsElement = document.querySelectorAll('.opponent-card');
+const playerCardsElement = document.querySelectorAll('.player-card');
 
 //cached values
 
 console.log(cardPoolElement);
 console.log(opponentHandElement);
 console.log(playerHandElement);
+console.log(deckElement);
+console.log(opponentCardsElement);
+console.log(playerCardsElement);
+
 
 
 // variables
@@ -141,6 +146,7 @@ let opponentHand = []
 let unoDeck = []
 let cardPool = []
 let player = turn // false for the opponent || true for the player
+let selectedColor = ""
 
 //functions
 function init() {
@@ -150,25 +156,35 @@ function init() {
     opponentHand = []
     cardPool = []
     player = turn
+    selectedColor = ""
     shuffleDeck()
     startingHands()
 
-    initUI()
     render()
 }
 
+function initUI() {
+    playerHandElement.replaceChildren();
+    opponentHandElement.replaceChildren();
+    cardPoolElement.replaceChildren();
+}
+
 function render() {
+    initUI()
+
     playerHand.forEach((card) => {
         let newCard = document.createElement("div")
-        newCard.textContent = card.name
-        newCard.classList.add('card')
+        newCard.textContent = `${card.name} : ${card.color}`
+        newCard.classList.add('player-card')
+        newCard.id = card.id
         playerHandElement.appendChild(newCard)
     })
 
     opponentHand.forEach((card) => {
         let newCard = document.createElement("div")
-        newCard.textContent = card.name
-        newCard.classList.add('card')
+        newCard.textContent = `${card.name} : ${card.color}`
+        newCard.classList.add('opponent-card')
+        newCard.id = card.id
         opponentHandElement.appendChild(newCard)
     })
 
@@ -180,12 +196,6 @@ function render() {
 
     deckElement.textContent = "TOTAL CARDS IN DECK : " + unoDeck.length;
 
-}
-
-function initUI() {
-    playerHandElement.replaceChildren();
-    opponentHandElement.replaceChildren();
-    cardPoolElement.replaceChildren();
 }
 
 function shuffleDeck() {
@@ -234,9 +244,62 @@ function switchTurn() {
 }
 
 function activateCardEffect(card) {
+    if (card.name === "Draw_Two") {
+        drawCards(2, !player)
+    }
+    else if (card.name === "Skip" || card.name === "Reverse") {
+        switchTurn()
+        switchTurn()
+    }
+    else if (card.name === "Wild") {
+
+    }
+    else if (card.name === "Wild_Draw_Four") {
+        drawCards(4, !player)
+    }
+    else {
+        console.log("ERROR: UNAVAILABLE CARD EFFECT")
+    }
 
 }
 
+function playCard(card) {
+    if (card.color === cardPool[cardPool.length - 1].color || card.name === cardPool[cardPool.length - 1].name) {
+        cardPool.push(card)
+
+        if (card.name === 'Draw_Two' || card.name === 'Skip' || card.name === 'Reverse') {
+            activateCardEffect(card)
+        }
+    }
+
+    if (card.name === 'Wild' || card.name === 'Wild_Draw_Four') {
+        cardPool.push(card)
+        activateCardEffect(card)
+    }
+}
+
+function isThereACardPlayable(player) {
+    let temp
+    if (player) {
+        temp = playerHand.filter((card) => {
+            return cardPool[cardPool.length - 1].color === card.color || card.name === 'Wild' || card.name === 'Wild_Draw_Four';
+        })
+
+        if (temp.length === 0) {
+            return false;
+        }
+        return true;
+    }
+
+}
+
+function counterPlusWildFour() {
+
+}
+
+function isTheCardCounterable() {
+
+}
 function cardsHandler(e) {
 
 

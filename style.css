@@ -10,6 +10,7 @@ body {
     display: flex;
     flex-direction: column;
     text-align: center;
+    justify-content: center;
     gap: 50px;
 }
 
@@ -32,12 +33,14 @@ body {
 
 #deck {
     border: solid white 1px;
+    height: 100px;
 }
 
 #card-pool {
-    width: 50%;
+    width: 80%;
     height: 100%;
     border: solid blue 1px;
+    height: 100px;
 }
 
 #player-hand {
@@ -49,7 +52,53 @@ body {
     padding-bottom: 10%;
 }
 
+#choose-color {
+    border: solid white 3px;
+    background-color: rgb(0 0 0 / 0.3);
+    color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 5px;
+    width: 50%;
+    /*display: none;*/
+}
 
-.card {
+#choose-color #red {
+    background-color: red;
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+    border: solid white 3px;
+}
+
+#choose-color #blue {
+    background-color: blue;
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+    border: solid white 3px;
+}
+
+#choose-color #yellow {
+    background-color: yellow;
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+    border: solid white 3px;
+}
+
+#choose-color #green {
+    background-color: green;
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+    border: solid white 3px;
+}
+
+.player-card,
+.opponent-card,
+#card {
     display: block;
+    border: solid white 1px;
 }
