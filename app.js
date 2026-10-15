@@ -120,9 +120,15 @@ const UnoCardCatalogue = [
     { id: 108, name: 'Wild Draw Four', color: 'black' }
 ];
 
+const cardPoolElement = document.querySelector('#card-pool');
+const opponentHandElement = document.querySelector('#opponent-hand');
+const playerHandElement = document.querySelector('#player-hand');
+
 //cached values
 
-
+console.log(cardPoolElement);
+console.log(opponentHandElement);
+console.log(playerHandElement);
 
 
 // variables
@@ -131,6 +137,7 @@ let winner = false
 let playerHand = []
 let opponentHand = []
 let unoDeck = []
+let cardPool = []
 let player = turn // false for the opponent || true for the player
 
 //functions
@@ -139,9 +146,14 @@ function init() {
     winner = false
     playerHand = []
     opponentHand = []
+    cardPool = []
     player = turn
     shuffleDeck()
     startingHands()
+}
+
+function updateUI() {
+
 }
 
 function shuffleDeck() {
@@ -177,8 +189,20 @@ function startingHands() {
     drawCards(7, !player);
 }
 
+function selectTheFirstCardForPool() {
+    let numberCards = unoDeck.filter((card) => {
+        return Number(card.name)
+    })
+
+    cardPool.push(numberCards[Math.floor(Math.random() * numberCards.length)])
+}
+
 function switchTurn() {
     turn = !turn
+}
+
+function activateCardEffect(card) {
+
 }
 
 function cardsHandler(e) {
@@ -196,8 +220,6 @@ shuffleDeck();
 
 //drawCards(5, true);
 //drawCards(2, false);
-
-
 
 
 console.log(UnoCardCatalogue);
@@ -221,6 +243,12 @@ console.log('first turn switch ', turn);
 switchTurn()
 console.log('second turn switch ', turn);
 console.log("-----------------------------------------")
+
+selectTheFirstCardForPool()
+console.log('THE FIRST CARD IN THE POOL : ', cardPool[0])
+console.log("-----------------------------------------")
+
+
 
 
 
