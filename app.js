@@ -124,8 +124,8 @@ const cardPoolElement = document.querySelector('#card-pool');
 const opponentHandElement = document.querySelector('#opponent-hand');
 const playerHandElement = document.querySelector('#player-hand');
 const deckElement = document.querySelector('#deck');
-const opponentCardsElement = document.querySelectorAll('.opponent-card');
-const playerCardsElement = document.querySelectorAll('.player-card');
+
+
 
 //cached values
 
@@ -133,8 +133,6 @@ console.log(cardPoolElement);
 console.log(opponentHandElement);
 console.log(playerHandElement);
 console.log(deckElement);
-console.log(opponentCardsElement);
-console.log(playerCardsElement);
 
 
 
@@ -147,6 +145,8 @@ let unoDeck = []
 let cardPool = []
 let player = turn // false for the opponent || true for the player
 let selectedColor = ""
+let selectedCard;
+
 
 //functions
 function init() {
@@ -159,6 +159,7 @@ function init() {
     selectedColor = ""
     shuffleDeck()
     startingHands()
+    selectTheFirstCardForPool()
 
     render()
 }
@@ -167,6 +168,7 @@ function initUI() {
     playerHandElement.replaceChildren();
     opponentHandElement.replaceChildren();
     cardPoolElement.replaceChildren();
+
 }
 
 function render() {
@@ -180,12 +182,22 @@ function render() {
         playerHandElement.appendChild(newCard)
     })
 
+    const playerCardsElement = document.querySelectorAll('.player-card');
+    playerCardsElement.forEach((card) => {
+        card.addEventListener('click', cardsHandler)
+    })
+
     opponentHand.forEach((card) => {
         let newCard = document.createElement("div")
         newCard.textContent = `${card.name} : ${card.color}`
         newCard.classList.add('opponent-card')
         newCard.id = card.id
         opponentHandElement.appendChild(newCard)
+    })
+
+    const opponentCardsElement = document.querySelectorAll('.opponent-card');
+    opponentCardsElement.forEach((card) => {
+        card.addEventListener('click', cardsHandler)
     })
 
     // show the last card in the pool
@@ -195,6 +207,8 @@ function render() {
     cardPoolElement.appendChild(cardForPool);
 
     deckElement.textContent = "TOTAL CARDS IN DECK : " + unoDeck.length;
+
+
 
 }
 
@@ -241,11 +255,15 @@ function selectTheFirstCardForPool() {
 
 function switchTurn() {
     turn = !turn
+    player = turn
 }
 
 function activateCardEffect(card) {
+    let cardsToBeDrawn = 0
     if (card.name === "Draw_Two") {
-        drawCards(2, !player)
+        cardsToBeDrawn = 2
+
+        drawCards(cardsToBeDrawn, !player)
     }
     else if (card.name === "Skip" || card.name === "Reverse") {
         switchTurn()
@@ -255,7 +273,8 @@ function activateCardEffect(card) {
 
     }
     else if (card.name === "Wild_Draw_Four") {
-        drawCards(4, !player)
+        cardsToBeDrawn = 4
+        drawCards(cardsToBeDrawn, !player)
     }
     else {
         console.log("ERROR: UNAVAILABLE CARD EFFECT")
@@ -264,19 +283,24 @@ function activateCardEffect(card) {
 }
 
 function playCard(card) {
+    let success = false;
+
     if (card.color === cardPool[cardPool.length - 1].color || card.name === cardPool[cardPool.length - 1].name) {
         cardPool.push(card)
-
         if (card.name === 'Draw_Two' || card.name === 'Skip' || card.name === 'Reverse') {
             activateCardEffect(card)
         }
+        success = true
     }
 
     if (card.name === 'Wild' || card.name === 'Wild_Draw_Four') {
         cardPool.push(card)
         activateCardEffect(card)
+        success = true
     }
+    return success;
 }
+
 
 function isThereACardPlayable(player) {
     let temp
@@ -293,23 +317,98 @@ function isThereACardPlayable(player) {
 
 }
 
-function counterPlusWildFour() {
+// complete later
+function counter() {
+    let cardsToBeDrawn = 0;
+    if (canBeCountered(!player)) {
+
+    }
+}
+
+//complete later
+function canBeCountered(player) {
+
+    let canBeCountered = true;
+    if (cardPool[cardPool.length - 1].name === "Draw_Two") {
+        if (player) {
+
+            let temp = playerHand.filter((card) => {
+                return card.name === "Draw_Two" || card.name === "Wild_Draw_Four"
+            })
+
+            if (temp.length === 0) {
+                canBeCountered = false
+            }
+            return canBeCountered
+        }
+        else {
+            let temp = opponentHand.filter((card) => {
+                return card.name === "Draw_Two" || card.name === "Wild_Draw_Four"
+            })
+
+            if (temp.length === 0) {
+                canBeCountered = false
+            }
+            return canBeCountered
+        }
+    }
+    else if (cardPool[cardPool.length - 1].name === "Wild_Draw_Four") {
+
+        if (player) {
+
+            let temp = playerHand.filter((card) => {
+                return card.name === "Draw_Two" || card.name === "Wild_Draw_Four"
+            })
+
+            if (temp.length === 0) {
+                canBeCountered = false
+            }
+            return canBeCountered
+        }
+        else {
+            let temp = opponentHand.filter((card) => {
+                return card.name === "Draw_Two" || card.name === "Wild_Draw_Four"
+            })
+
+            if (temp.length === 0) {
+                canBeCountered = false
+            }
+            return canBeCountered
+        }
+    }
 
 }
 
-function isTheCardCounterable() {
-
-}
 function cardsHandler(e) {
+    let selectedCard;
 
+    if (player) {
+        selectedCard = playerHand.find((card) => {
+            return card.id === Number(e.target.id)
+        })
+        console.log(selectedCard)
 
+        //correct
+        if (playCard(selectedCard)) {
+            console.log(`the card has been successfully placed in the cards pool : CARD ${selectedCard}`)
+            console.log(`the ${selectedCard} index : ${playerHand.indexOf(selectedCard)}`)
+            console.log(`the removed object : ${playerHand.splice(playerHand.indexOf(selectedCard), 1)}`)
+        }
+        else {
+            console.log(`ERROR: THE CARD CANT BE PLAYED : CARD `, selectedCard)
+        }
+    }
+    else {
+        selectedCard = opponentHand.find((card) => {
+            return card.id === Number(e.target.id)
+        })
+        console.log(selectedCard)
+    }
     render();
-
 }
 
 
 // Event Listeners
-
 
 
 
