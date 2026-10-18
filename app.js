@@ -124,6 +124,7 @@ const cardPoolElement = document.querySelector('#card-pool');
 const opponentHandElement = document.querySelector('#opponent-hand');
 const playerHandElement = document.querySelector('#player-hand');
 const deckElement = document.querySelector('#deck');
+const chooseColorElement = document.querySelector('#choose-color');
 
 
 
@@ -133,18 +134,19 @@ console.log(cardPoolElement);
 console.log(opponentHandElement);
 console.log(playerHandElement);
 console.log(deckElement);
+console.log(chooseColorElement);
 
 
 
 // variables
 let turn = true // this specify for whos turn
-let winner = false
+let winner;
 let playerHand = []
 let opponentHand = []
 let unoDeck = []
 let cardPool = []
 let player = turn // false for the opponent || true for the player
-let selectedColor = ""
+let selectedColor;
 let selectedCard;
 
 
@@ -180,6 +182,7 @@ function render() {
         newCard.classList.add('player-card')
         newCard.id = card.id
         playerHandElement.appendChild(newCard)
+        console.log(newCard)
     })
 
     const playerCardsElement = document.querySelectorAll('.player-card');
@@ -193,6 +196,8 @@ function render() {
         newCard.classList.add('opponent-card')
         newCard.id = card.id
         opponentHandElement.appendChild(newCard)
+        console.log(newCard)
+
     })
 
     const opponentCardsElement = document.querySelectorAll('.opponent-card');
@@ -229,15 +234,22 @@ function shuffleDeck() {
 
 function drawCards(cardsNum, player) {
 
+    let drawnCard = false;
+
     for (i = 0; i < cardsNum; i++) {
         if (player) {
-            playerHand.push(unoDeck[i])
+            unoDeck.shift()
+            playerHand.push(unoDeck.shift())
+        }
+        else if (!player) {
+            opponentHand.push(unoDeck.shift())
         }
         else {
-            opponentHand.push(unoDeck[i])
+            return
         }
-        unoDeck.shift();
+        drawnCard = true
     }
+    return drawnCard;
 }
 
 function startingHands() {
@@ -267,14 +279,20 @@ function activateCardEffect(card) {
     }
     else if (card.name === "Skip" || card.name === "Reverse") {
         switchTurn()
-        switchTurn()
     }
     else if (card.name === "Wild") {
-
+        let colorArray = ['red', 'blue', 'yellow', 'green']
+        selectedColor = colorArray[Math.floor(Math.random() * colorArray.length)]
+        console.log(`THE SELECTED COLOR : ${selectedColor}`)
+        cardPool[cardPool.length - 1].color = selectedColor
     }
     else if (card.name === "Wild_Draw_Four") {
         cardsToBeDrawn = 4
         drawCards(cardsToBeDrawn, !player)
+        let colorArray = ['red', 'blue', 'yellow', 'green']
+        selectedColor = colorArray[Math.floor(Math.random() * colorArray.length)]
+        console.log(`THE SELECTED COLOR : ${selectedColor}`)
+        cardPool[cardPool.length - 1].color = selectedColor
     }
     else {
         console.log("ERROR: UNAVAILABLE CARD EFFECT")
@@ -285,19 +303,26 @@ function activateCardEffect(card) {
 function playCard(card) {
     let success = false;
 
-    if (card.color === cardPool[cardPool.length - 1].color || card.name === cardPool[cardPool.length - 1].name) {
+    if (card.color === cardPool[cardPool.length - 1].color ||
+        card.name === cardPool[cardPool.length - 1].name ||
+        card.name === 'Wild' ||
+        card.name === 'Wild_Draw_Four') {
         cardPool.push(card)
-        if (card.name === 'Draw_Two' || card.name === 'Skip' || card.name === 'Reverse') {
+        if (card.name === 'Draw_Two' ||
+            card.name === 'Skip' ||
+            card.name === 'Reverse' ||
+            card.name === 'Wild' ||
+            card.name === 'Wild_Draw_Four') {
             activateCardEffect(card)
         }
         success = true
     }
 
-    if (card.name === 'Wild' || card.name === 'Wild_Draw_Four') {
-        cardPool.push(card)
-        activateCardEffect(card)
-        success = true
-    }
+    // if (card.name === 'Wild' || card.name === 'Wild_Draw_Four') {
+    //     cardPool.push(card)
+    //     activateCardEffect(card)
+    //     success = true
+    // }
     return success;
 }
 
@@ -309,6 +334,15 @@ function isThereACardPlayable(player) {
             return cardPool[cardPool.length - 1].color === card.color || card.name === 'Wild' || card.name === 'Wild_Draw_Four';
         })
 
+        if (temp.length === 0) {
+            return false;
+        }
+        return true;
+    }
+    else {
+        temp = opponentHand.filter((card) => {
+            return cardPool[cardPool.length - 1].color === card.color || card.name === 'Wild' || card.name === 'Wild_Draw_Four';
+        })
         if (temp.length === 0) {
             return false;
         }
@@ -379,76 +413,77 @@ function canBeCountered(player) {
 
 }
 
+function checkForWinner() {
+
+}
+
 function cardsHandler(e) {
-    let selectedCard;
+    try {
+        let selectedCard;
 
-    if (player) {
-        selectedCard = playerHand.find((card) => {
-            return card.id === Number(e.target.id)
-        })
-        console.log(selectedCard)
+        if (player) {
+            selectedCard = playerHand.find((card) => {
+                return card.id === Number(e.target.id)
+            })
+            console.log(selectedCard)
 
-        //correct
-        if (playCard(selectedCard)) {
-            console.log(`the card has been successfully placed in the cards pool : CARD ${selectedCard}`)
-            console.log(`the ${selectedCard} index : ${playerHand.indexOf(selectedCard)}`)
-            console.log(`the removed object : ${playerHand.splice(playerHand.indexOf(selectedCard), 1)}`)
+            //correct
+            if (playCard(selectedCard)) {
+                console.log(`the card has been successfully placed in the cards pool : CARD `, selectedCard)
+                console.log(`the `, selectedCard, ` index : `, playerHand.indexOf(selectedCard))
+                console.log(`the removed object : `, playerHand.splice(playerHand.indexOf(selectedCard), 1))
+                switchTurn();
+            }
+            else {
+                console.log(`ERROR: THE CARD CANT BE PLAYED : CARD `, selectedCard)
+            }
         }
         else {
-            console.log(`ERROR: THE CARD CANT BE PLAYED : CARD `, selectedCard)
+            selectedCard = opponentHand.find((card) => {
+                return card.id === Number(e.target.id)
+            })
+
+            console.log(selectedCard)
+
+            if (playCard(selectedCard)) {
+                console.log(`the card has been successfully placed in the cards pool : CARD ${selectedCard}`)
+                console.log(`the ${selectedCard} index : ${opponentHand.indexOf(selectedCard)}`)
+                console.log(`the removed object : ${opponentHand.splice(playerHand.indexOf(selectedCard), 1)}`)
+                switchTurn();
+            }
+            else {
+                console.log(`ERROR: THE CARD CANT BE PLAYED : CARD `, selectedCard)
+            }
         }
+        render();
+
     }
-    else {
-        selectedCard = opponentHand.find((card) => {
-            return card.id === Number(e.target.id)
-        })
-        console.log(selectedCard)
+    catch (error) {
+
+        console.log("YOU CANNOT PICK A CARD IN THE OPPONENT HAND")
     }
-    render();
 }
 
 
 // Event Listeners
+deckElement.addEventListener('click', () => {
 
+    if (!isThereACardPlayable(player)) {
+        if ((drawCards(1, player))) {
+            switchTurn();
+        }
+    }
+    render()
+
+
+});
 
 
 
 
 //test calling & Console Logs
 
-shuffleDeck();
-
-//drawCards(5, true);
-//drawCards(2, false);
-
-
-console.log(UnoCardCatalogue);
-console.log(`Total cards: ${UnoCardCatalogue.length}`);
-console.log("-----------------------------------------")
-
-console.log(unoDeck);
-console.log(`TOTAL CARDS: ${unoDeck.length}`);
-console.log("-----------------------------------------")
-
-startingHands();
-console.log('PLAYER HANDS : ', playerHand);
-console.log('REMAINING CARDS IN DECK : ', unoDeck.length);
-console.log('OPPONENTS HANDS : ', opponentHand);
-console.log('REMAINING CARDS IN DECK : ', unoDeck.length);
-console.log("-----------------------------------------")
-
-switchTurn()
-console.log('first turn switch ', turn);
-
-switchTurn()
-console.log('second turn switch ', turn);
-console.log("-----------------------------------------")
-
-selectTheFirstCardForPool()
-console.log('THE FIRST CARD IN THE POOL : ', cardPool[0])
-console.log("-----------------------------------------")
-
-render()
+init();
 
 
 
