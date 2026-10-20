@@ -53,6 +53,7 @@ body {
 }
 
 #choose-color {
+    display: none;
     border: solid white 3px;
     background-color: rgb(0 0 0 / 0.3);
     color: white;
@@ -96,11 +97,48 @@ body {
     border: solid white 3px;
 }
 
+/* Card design */
 .player-card,
 .opponent-card,
-#card {
-    display: block;
+.card {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
     border: solid white 1px;
+    border-radius: 15px;
+    width: 150px;
+    height: 200px;
+    color: white;
 }
 
-/* card design*/
+/* Player card colors */
+.player-card.green,
+.opponent-card.green,
+.card.green {
+    background-color: darkgreen;
+}
+
+.player-card.red,
+.opponent-card.red,
+.card.red {
+    background-color: darkred;
+}
+
+.player-card.blue,
+.opponent-card.blue,
+.card.blue {
+    background-color: darkblue;
+}
+
+.player-card.yellow,
+.opponent-card.yellow,
+.card.yellow {
+    background-color: goldenrod;
+}
+
+.player-card.black,
+.opponent-card.black,
+.card.black {
+    background-color: #1f1f1f;
+}

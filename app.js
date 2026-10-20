@@ -140,7 +140,7 @@ console.log(chooseColorElement);
 
 // variables
 let turn = true // this specify for whos turn
-let winner;
+let winner = "GAME-ONGOING";
 let playerHand = []
 let opponentHand = []
 let unoDeck = []
@@ -178,8 +178,9 @@ function render() {
 
     playerHand.forEach((card) => {
         let newCard = document.createElement("div")
-        newCard.textContent = `${card.name} : ${card.color}`
+        newCard.textContent = `${card.name}`
         newCard.classList.add('player-card')
+        newCard.classList.add(card.color)
         newCard.id = card.id
         playerHandElement.appendChild(newCard)
         console.log(newCard)
@@ -192,8 +193,9 @@ function render() {
 
     opponentHand.forEach((card) => {
         let newCard = document.createElement("div")
-        newCard.textContent = `${card.name} : ${card.color}`
+        newCard.textContent = `${card.name}`
         newCard.classList.add('opponent-card')
+        newCard.classList.add(card.color)
         newCard.id = card.id
         opponentHandElement.appendChild(newCard)
         console.log(newCard)
@@ -207,8 +209,9 @@ function render() {
 
     // show the last card in the pool
     let cardForPool = document.createElement("div")
-    cardForPool.textContent = cardPool[cardPool.length - 1].name + " : " + cardPool[cardPool.length - 1].color
-    cardForPool.classList.add('card')
+    cardForPool.textContent = cardPool[cardPool.length - 1].name;
+    cardForPool.classList.add('card');
+    cardForPool.classList.add(cardPool[cardPool.length - 1].color);
     cardPoolElement.appendChild(cardForPool);
 
     deckElement.textContent = "TOTAL CARDS IN DECK : " + unoDeck.length;
@@ -414,7 +417,12 @@ function canBeCountered(player) {
 }
 
 function checkForWinner() {
-
+    if (playerHand.length === 0) {
+        winner = "WIN"
+    }
+    else if (opponentHand.length === 0) {
+        winner = "LOSE"
+    }
 }
 
 function cardsHandler(e) {
@@ -454,6 +462,13 @@ function cardsHandler(e) {
             else {
                 console.log(`ERROR: THE CARD CANT BE PLAYED : CARD `, selectedCard)
             }
+        }
+        checkForWinner()
+        if (winner === "WIN") {
+            console.log("THE PLAYER HAVE WON")
+        }
+        else if (winner === "LOSE") {
+            console.log("THE OPPONENT HAVE WON")
         }
         render();
 
