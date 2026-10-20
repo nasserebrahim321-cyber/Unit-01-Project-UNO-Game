@@ -124,7 +124,9 @@ const cardPoolElement = document.querySelector('#card-pool');
 const opponentHandElement = document.querySelector('#opponent-hand');
 const playerHandElement = document.querySelector('#player-hand');
 const deckElement = document.querySelector('#deck');
-const chooseColorElement = document.querySelector('#choose-color');
+//const chooseColorElement = document.querySelector('#choose-color');
+//const wildColorElements = document.querySelectorAll('.choose-color');
+const vicoryElement = document.querySelector('#victory')
 
 
 
@@ -134,7 +136,9 @@ console.log(cardPoolElement);
 console.log(opponentHandElement);
 console.log(playerHandElement);
 console.log(deckElement);
-console.log(chooseColorElement);
+//console.log(chooseColorElement);
+//console.log(wildColorElements);
+console.log(vicoryElement)
 
 
 
@@ -170,7 +174,7 @@ function initUI() {
     playerHandElement.replaceChildren();
     opponentHandElement.replaceChildren();
     cardPoolElement.replaceChildren();
-
+    //chooseColorElement.classList.add('hidden');
 }
 
 function render() {
@@ -183,7 +187,7 @@ function render() {
         newCard.classList.add(card.color)
         newCard.id = card.id
         playerHandElement.appendChild(newCard)
-        console.log(newCard)
+        //console.log(newCard)
     })
 
     const playerCardsElement = document.querySelectorAll('.player-card');
@@ -198,7 +202,7 @@ function render() {
         newCard.classList.add(card.color)
         newCard.id = card.id
         opponentHandElement.appendChild(newCard)
-        console.log(newCard)
+        //console.log(newCard)
 
     })
 
@@ -241,7 +245,6 @@ function drawCards(cardsNum, player) {
 
     for (i = 0; i < cardsNum; i++) {
         if (player) {
-            unoDeck.shift()
             playerHand.push(unoDeck.shift())
         }
         else if (!player) {
@@ -273,6 +276,7 @@ function switchTurn() {
     player = turn
 }
 
+//async 
 function activateCardEffect(card) {
     let cardsToBeDrawn = 0
     if (card.name === "Draw_Two") {
@@ -294,6 +298,7 @@ function activateCardEffect(card) {
         drawCards(cardsToBeDrawn, !player)
         let colorArray = ['red', 'blue', 'yellow', 'green']
         selectedColor = colorArray[Math.floor(Math.random() * colorArray.length)]
+
         console.log(`THE SELECTED COLOR : ${selectedColor}`)
         cardPool[cardPool.length - 1].color = selectedColor
     }
@@ -305,6 +310,16 @@ function activateCardEffect(card) {
 
 function playCard(card) {
     let success = false;
+
+    if (!player) {
+        let possibleCardsToBePlayed = opponentHand.filter((cards) => {
+            return cardPool[cardPool.length - 1].color === card.color ||
+                card.name === 'Wild' ||
+                card.name === 'Wild_Draw_Four' ||
+                cardPool[cardPool.length - 1].name === card.name;
+        })
+        card = possibleCardsToBePlayed[Math.floor(Math.random() * possibleCardsToBePlayed.length)]
+    }
 
     if (card.color === cardPool[cardPool.length - 1].color ||
         card.name === cardPool[cardPool.length - 1].name ||
@@ -321,11 +336,6 @@ function playCard(card) {
         success = true
     }
 
-    // if (card.name === 'Wild' || card.name === 'Wild_Draw_Four') {
-    //     cardPool.push(card)
-    //     activateCardEffect(card)
-    //     success = true
-    // }
     return success;
 }
 
@@ -416,6 +426,29 @@ function canBeCountered(player) {
 
 }
 
+function chooseColor() {
+    return new Promise((resolve) => {
+        chooseColorElement.classList.remove('hidden');
+
+        function handleColorSelection(e) {
+            if (!e.target.classList.contains('choose-color')) {
+                return;
+            }
+
+            selectedColor = e.target.id;
+
+            chooseColorElement.classList.add('hidden');
+            chooseColorElement.removeEventListener('click', handleColorSelection);
+
+            resolve(selectedColor);
+        }
+
+        chooseColorElement.addEventListener('click', handleColorSelection);
+    });
+}
+
+
+
 function checkForWinner() {
     if (playerHand.length === 0) {
         winner = "WIN"
@@ -466,9 +499,13 @@ function cardsHandler(e) {
         checkForWinner()
         if (winner === "WIN") {
             console.log("THE PLAYER HAVE WON")
+            vicoryElement.classList.remove('hidden')
+            vicoryElement.textContent = "THE PLAYER HAVE WON"
         }
         else if (winner === "LOSE") {
             console.log("THE OPPONENT HAVE WON")
+            vicoryElement.classList.remove('hidden')
+            vicoryElement.textContent = "THE OPPONENT HAVE WON"
         }
         render();
 
@@ -479,6 +516,9 @@ function cardsHandler(e) {
     }
 }
 
+function wildCardHandler(e) {
+    selectedColor = e.target.id
+}
 
 // Event Listeners
 deckElement.addEventListener('click', () => {
@@ -489,11 +529,11 @@ deckElement.addEventListener('click', () => {
         }
     }
     render()
-
-
 });
 
-
+// wildColorElements.forEach((element) => {
+//     element.addEventListener(('click'), wildCardHandler)
+// })
 
 
 //test calling & Console Logs

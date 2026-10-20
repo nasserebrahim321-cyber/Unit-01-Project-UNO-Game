@@ -11,11 +11,9 @@ body {
     flex-direction: column;
     text-align: center;
     justify-content: center;
-    gap: 50px;
 }
 
 #opponent-hand {
-    border: solid black 5px;
     display: flex;
     justify-content: space-between;
     gap: 10px;
@@ -24,7 +22,7 @@ body {
 }
 
 #field {
-    border: solid black 5px;
+
     display: flex;
     width: 100%;
     height: 30%;
@@ -33,18 +31,24 @@ body {
 
 #deck {
     border: solid white 1px;
-    height: 100px;
+    background-image: url("./Images/back-card.png");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 15px;
+    width: 150px;
+    height: 200px;
+    color: white;
+    font-weight: 500;
 }
 
 #card-pool {
     width: 80%;
-    height: 100%;
-    border: solid blue 1px;
     height: 100px;
+    align-items: end;
 }
 
 #player-hand {
-    border: solid black 5px;
     display: flex;
     justify-content: space-between;
     gap: 10px;
@@ -60,8 +64,8 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 5px;
-    width: 50%;
+    gap: 1px;
+    width: 30%;
     /*display: none;*/
 }
 
@@ -110,6 +114,10 @@ body {
     width: 150px;
     height: 200px;
     color: white;
+    font-weight: 500;
+    font-size: 20px;
+    border: solid white 5px;
+
 }
 
 /* Player card colors */
@@ -141,4 +149,17 @@ body {
 .opponent-card.black,
 .card.black {
     background-color: #1f1f1f;
+}
+
+.hidden {
+    display: none;
+}
+
+#victory {
+    border-radius: 10px;
+    background-color: white;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 500;
+
 }
