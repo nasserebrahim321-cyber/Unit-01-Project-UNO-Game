@@ -175,6 +175,15 @@ function initUI() {
     opponentHandElement.replaceChildren();
     cardPoolElement.replaceChildren();
     //chooseColorElement.classList.add('hidden');
+
+    if (player) {
+        playerHandElement.classList.add('currentTurn');
+        opponentHandElement.classList.remove('currentTurn')
+    }
+    else {
+        opponentHandElement.classList.add('currentTurn');
+        playerHandElement.classList.remove('currentTurn');
+    }
 }
 
 function render() {
@@ -311,15 +320,15 @@ function activateCardEffect(card) {
 function playCard(card) {
     let success = false;
 
-    if (!player) {
-        let possibleCardsToBePlayed = opponentHand.filter((cards) => {
-            return cardPool[cardPool.length - 1].color === card.color ||
-                card.name === 'Wild' ||
-                card.name === 'Wild_Draw_Four' ||
-                cardPool[cardPool.length - 1].name === card.name;
-        })
-        card = possibleCardsToBePlayed[Math.floor(Math.random() * possibleCardsToBePlayed.length)]
-    }
+    // if (!player) {
+    //     let possibleCardsToBePlayed = opponentHand.filter((cards) => {
+    //         return cardPool[cardPool.length - 1].color === card.color ||
+    //             card.name === 'Wild' ||
+    //             card.name === 'Wild_Draw_Four' ||
+    //             cardPool[cardPool.length - 1].name === card.name;
+    //     })
+    //     card = possibleCardsToBePlayed[Math.floor(Math.random() * possibleCardsToBePlayed.length)]
+    // }
 
     if (card.color === cardPool[cardPool.length - 1].color ||
         card.name === cardPool[cardPool.length - 1].name ||
@@ -426,6 +435,7 @@ function canBeCountered(player) {
 
 }
 
+//complete later
 function chooseColor() {
     return new Promise((resolve) => {
         chooseColorElement.classList.remove('hidden');
@@ -489,7 +499,7 @@ function cardsHandler(e) {
             if (playCard(selectedCard)) {
                 console.log(`the card has been successfully placed in the cards pool : CARD ${selectedCard}`)
                 console.log(`the ${selectedCard} index : ${opponentHand.indexOf(selectedCard)}`)
-                console.log(`the removed object : ${opponentHand.splice(playerHand.indexOf(selectedCard), 1)}`)
+                console.log(`the removed object : ${opponentHand.splice(opponentHand.indexOf(selectedCard), 1)}`)
                 switchTurn();
             }
             else {
@@ -516,6 +526,7 @@ function cardsHandler(e) {
     }
 }
 
+// complete later
 function wildCardHandler(e) {
     selectedColor = e.target.id
 }
@@ -525,7 +536,9 @@ deckElement.addEventListener('click', () => {
 
     if (!isThereACardPlayable(player)) {
         if ((drawCards(1, player))) {
-            switchTurn();
+            if (!isThereACardPlayable(player)) {
+                switchTurn();
+            }
         }
     }
     render()
